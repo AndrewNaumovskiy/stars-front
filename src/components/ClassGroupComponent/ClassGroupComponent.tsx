@@ -6,7 +6,7 @@ import { Card, CardActionArea, CardContent, Stack, Typography } from "@mui/mater
 import AccessTimeIcon from '@mui/icons-material/AccessTime';
 import CheckCircleOutlineIcon from '@mui/icons-material/CheckCircleOutline';
 
-import { GroupInDayModel } from "../../pages/GroupsPage/GroupsPage";
+import { GroupInDayModel } from "../../pages/ClassesPage/ClassesPage";
 
 interface ClassGroupComponentProps {
     group: GroupInDayModel;
@@ -42,12 +42,17 @@ const ClassGroupComponent: FC<ClassGroupComponentProps> = ({ group }) => {
                         }}>
                         <h2 className={"meow"}>{ToRoman(group.lessonNumber)}</h2>
 
+                        <Stack sx={{ mt: "15px" }}>
+                            <p style={{ margin: "0px", fontSize: "16px" }}>{group.startTime}</p>
+                            <p style={{ margin: "0px", fontSize: "16px" }}>{group.endTime}</p>
+                        </Stack>
+
                         {group.status === 1 ? <AccessTimeIcon htmlColor="blue" /> : null}
                         {group.status === 2 ? <CheckCircleOutlineIcon htmlColor="green" /> : null}
                     </Stack>
 
                     <Typography sx={{ color: 'text.secondary' }}>
-                        {group.name} Група
+                        {group.name} group
                     </Typography>
                 </CardContent>
             </CardActionArea>

@@ -2,7 +2,7 @@ import { FC, useEffect, useState } from "react";
 
 import { Card, CardActionArea, CardContent, CardHeader, IconButton, Stack } from "@mui/material";
 
-import { Star, MacroOff } from "@mui/icons-material";
+import { ThumbUp, MacroOff, StarBorder } from "@mui/icons-material";
 
 import { StudentModel } from "../../pages/StudentsPage/StudentsPage";
 
@@ -42,7 +42,7 @@ const StudentItemComponent: FC<StudentItemComponentProps> = ({ student, HandleSt
     }
 
     return (
-        <Card>
+        <Card sx={{ marginTop: "1px" }}>
             <Stack
                 direction={"row"}
                 sx={{
@@ -50,10 +50,19 @@ const StudentItemComponent: FC<StudentItemComponentProps> = ({ student, HandleSt
                     alignItems: "center",
                 }}>
                 <CardActionArea onClick={() => HandleStudentClick(student)}>
-                    <CardHeader title={`${student.lastName} ${student.firstName}`} sx={{ pb: "0px" }} />
+                    <Stack
+                        direction={"row"}
+                        sx={{
+                            justifyContent: "flex-start",
+                            alignItems: "center",
+                            padding: "7px"
+                        }}>
+                        {student.isFavorite ? <StarBorder htmlColor="orange" /> : null}
+                        <CardHeader title={`${student.lastName} ${student.firstName}`} sx={{ padding: "0px", marginLeft: "7px" }} />
+                    </Stack>
 
                     <CardContent sx={{ pb: "3px", pt: "2px" }} >
-                        Інформація про студента трошки довша ніж в інших місцях
+                        {student.impression}
                     </CardContent>
                 </CardActionArea>
 
@@ -69,7 +78,7 @@ const StudentItemComponent: FC<StudentItemComponentProps> = ({ student, HandleSt
                         disabled={goodMarkDisabled}
                         color="primary"
                         onClick={() => ClickMark(1)}>
-                        <Star />
+                        <ThumbUp />
                     </IconButton>
                 </Stack>
             </Stack>

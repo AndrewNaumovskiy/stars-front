@@ -2,7 +2,7 @@ import { SnackbarProvider } from "notistack"
 import { Routes, Route, BrowserRouter } from "react-router-dom"
 
 import LoginPage from "./pages/LoginPage"
-import GroupsPage from "./pages/GroupsPage"
+import ClassesPage from "./pages/ClassesPage"
 import StudentsPage from "./pages/StudentsPage"
 import StudentInfoPage from "./pages/StudentInfoPage"
 
@@ -21,7 +21,7 @@ function App() {
 					<Route path="/login" element={<LoginPage />} />
 
 					<Route element={<RequireAuth />}>
-						<Route path="/" element={<GroupsPage />} />
+						<Route path="/" element={<ClassesPage />} />
 
 						<Route path="/group">
 							<Route path=":id" element={<StudentsPage />} />

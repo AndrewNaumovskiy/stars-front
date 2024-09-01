@@ -6,7 +6,7 @@ import ClassGroupComponent from "../../components/ClassGroupComponent";
 import { api, IError, uuidv4 } from "../../utils";
 import { ImageList } from "@mui/material";
 
-import "./GroupsPage.css";
+import "./ClassesPage.css";
 
 interface GetGroupsResponseModel {
     data: GetGroupsResponseData;
@@ -26,9 +26,11 @@ export interface GroupInDayModel {
     name: string;
     lessonNumber: number;
     status: number;
+    startTime: string;
+    endTime: string;
 }
 
-function GroupsPage() {
+function ClassesPage() {
     const { enqueueSnackbar } = useSnackbar();
 
     const [groups, setGroups] = useState<GroupModel[]>([]);
@@ -73,4 +75,4 @@ function GroupsPage() {
     )
 }
 
-export default GroupsPage;
+export default ClassesPage;
