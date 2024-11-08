@@ -1,10 +1,11 @@
 import { SnackbarProvider } from "notistack"
 import { Routes, Route, BrowserRouter } from "react-router-dom"
 
-import LoginPage from "./pages/LoginPage"
-import ClassesPage from "./pages/ClassesPage"
 import StudentsPage from "./pages/StudentsPage"
+import LoginPage from "./pages/LoginPage/LoginPage"
+import ReschedulePage from "./pages/ReschedulePage"
 import StudentInfoPage from "./pages/StudentInfoPage"
+import ClassesPage from "./pages/ClassesPage/ClassesPage"
 
 import { RequireAuth } from "./components/RequireAuth"
 
@@ -30,6 +31,8 @@ function App() {
 						<Route path="/student">
 							<Route path=":id" element={<StudentInfoPage />} />
 						</Route>
+
+						<Route path="/schedule" element={<ReschedulePage />} />
 					</Route>
 				</Routes>
 			</BrowserRouter>

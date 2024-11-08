@@ -1,7 +1,6 @@
 import { Dayjs } from "dayjs";
 import { useSnackbar } from "notistack";
-import { useDebounce } from "use-debounce";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 
 import { ArrowBackIos, Search, Info, Telegram, AccountBox } from "@mui/icons-material";
@@ -30,7 +29,7 @@ export interface StudentModel {
     isFavorite: boolean;
     impression: string;
 
-    mark: MarkDbModel;
+    mark: MarkDbModel | null;
 }
 
 interface GroupInfoModel {
@@ -54,6 +53,15 @@ export interface StatusResponseData {
     status: string;
 }
 
+export interface SetMarkResponseModel {
+    data: SetMarkResponseData;
+    error: IError;
+}
+
+export interface SetMarkResponseData {
+    mark: MarkDbModel;
+}
+
 function StudentsPage() {
     const navigate = useNavigate();
     const { enqueueSnackbar } = useSnackbar();
@@ -61,9 +69,10 @@ function StudentsPage() {
     const { id } = useParams<string>();
 
     const [search, setSearch] = useState<string>("");
-    const [debouncedSearch] = useDebounce(search, 500);
 
     const [students, setStudents] = useState<StudentModel[]>([]);
+    const studentCopy = useRef<StudentModel[]>([]);
+
     const [groupInfo, setGroupInfo] = useState<GroupInfoModel | null>(null);
 
     const [showInfo, setShowInfo] = useState<boolean>(false);
@@ -73,15 +82,17 @@ function StudentsPage() {
     }
 
     useEffect(() => {
-        GetStudents(debouncedSearch);
-    }, [debouncedSearch]);
+        GetStudents();
+    }, []);
 
-    const GetStudents = async (search: string = "") => {
+    const GetStudents = async () => {
         try {
-            const response: GetStudentsResponseModel = await api.get(`api/students/group/${id}?search=${search}`).json();
+            const response: GetStudentsResponseModel = await api.get(`api/students/group/${id}`).json();
 
             if (response.error == null) {
                 setStudents(response.data.students);
+                studentCopy.current = response.data.students;
+
                 setGroupInfo(response.data.groupInfo);
             }
             else {
@@ -96,22 +107,35 @@ function StudentsPage() {
     const HandleSearch = (event: React.ChangeEvent<HTMLInputElement>) => {
         let value = event.target.value;
         setSearch(value);
+
+        if (value === "") {
+            setStudents(studentCopy.current);
+            return;
+        }
+
+        const temp = studentCopy.current.filter(s =>
+            s.firstName.toLowerCase().includes(value.toLowerCase()) ||
+            s.lastName.toLowerCase().includes(value.toLowerCase()) ||
+            s.middleName.toLowerCase().includes(value.toLowerCase())
+        );
+
+        setStudents(temp);
     }
 
     const HandleStudentClick = (student: StudentModel) => {
         navigate("/student/" + student.id);
     }
 
-    const HandleMark = async (student: StudentModel, markType: number) => {
-        var url: string = `api/students/${student.id}/setMark/${markType}`;
-
-        if (student.mark !== null)
-            url = `api/students/${student.id}/updateMark/${student.mark.id}/${markType}`;
-
+    const SetMark = async (student: StudentModel, markType: number) => {
         try {
-            const response: StatusResponseModel = await api.post(url).json();
+            const response: SetMarkResponseModel = await api.post(`api/students/${student.id}/setMark/${markType}`).json();
 
             if (response.error == null) {
+                setStudents(prevStudents =>
+                    prevStudents.map(s =>
+                        s.id === student.id ? { ...s, mark: response.data.mark } : s
+                    )
+                );
                 enqueueSnackbar("Ok!", { variant: "success" });
             }
             else {
@@ -120,6 +144,61 @@ function StudentsPage() {
         }
         catch (error) {
             enqueueSnackbar((error as Error).message, { variant: "error" });
+        }
+    }
+
+    const DeleteMark = async (student: StudentModel) => {
+        try {
+            const response: StatusResponseModel = await api.post(`api/students/${student.id}/deleteMark/${student.mark!.id}`).json();
+
+            if (response.error == null) {
+                setStudents(prevStudents =>
+                    prevStudents.map(s =>
+                        s.id === student.id ? { ...s, mark: null } : s
+                    )
+                );
+            }
+            else {
+                enqueueSnackbar(response.error.description, { variant: "error" });
+            }
+        }
+        catch (error) {
+            enqueueSnackbar((error as Error).message, { variant: "error" });
+        }
+    }
+
+    const UpdateMark = async (student: StudentModel, markType: number) => {
+        try {
+            const response: SetMarkResponseModel = await api.post(`api/students/${student.id}/updateMark/${student.mark!.id}/${markType}`).json();
+
+            if (response.error == null) {
+                setStudents(prevStudents =>
+                    prevStudents.map(s =>
+                        s.id === student.id ? { ...s, mark: response.data.mark } : s
+                    )
+                );
+                enqueueSnackbar("Ok!", { variant: "success" });
+            }
+            else {
+                enqueueSnackbar(response.error.description, { variant: "error" });
+            }
+        }
+        catch (error) {
+            enqueueSnackbar((error as Error).message, { variant: "error" });
+        }
+    }
+
+    const HandleMark = async (student: StudentModel, markType: number) => {
+        if (student.mark === null) {
+            await SetMark(student, markType);
+            return;
+        }
+
+        if (student.mark.markType === markType) {
+            await DeleteMark(student);
+        }
+        else {
+            await UpdateMark(student, markType);
         }
     }
 

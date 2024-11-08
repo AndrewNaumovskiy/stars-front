@@ -1,7 +1,7 @@
 import ky from "ky";
 
 export function GetIP(): string {
-    //return "https://localhost:44349/";
+    return "https://localhost:44349/";
     return "http://18.193.72.105/";
 }
 

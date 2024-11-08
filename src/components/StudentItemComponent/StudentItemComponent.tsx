@@ -2,9 +2,13 @@ import { FC, useEffect, useState } from "react";
 
 import { Card, CardActionArea, CardContent, CardHeader, IconButton, Stack } from "@mui/material";
 
-import { ThumbUp, MacroOff, StarBorder } from "@mui/icons-material";
+import { ThumbUp, ThumbDownAlt, StarBorder, PersonOff } from "@mui/icons-material";
 
 import { StudentModel } from "../../pages/StudentsPage/StudentsPage";
+
+const MISSING_STUDENT: number = 0;
+const BAD_MARK_STUDENT: number = 1;
+const GOOD_MARK_STUDENT: number = 2;
 
 interface StudentItemComponentProps {
     student: StudentModel;
@@ -14,28 +18,37 @@ interface StudentItemComponentProps {
 
 const StudentItemComponent: FC<StudentItemComponentProps> = ({ student, HandleStudentClick, HandleMark }) => {
 
-    const [badMarkDisabled, setBadMarkDisabled] = useState<boolean>(false);
-    const [goodMarkDisabled, setGoodMarkDisabled] = useState<boolean>(false);
+    const [missingMarkSet, setMissingMarkSet] = useState<boolean>(false);
+    const [badMarkSet, setBadMarkSet] = useState<boolean>(false);
+    const [goodMarkSet, setGoodMarkSet] = useState<boolean>(false);
 
     useEffect(() => {
         if (student.mark === null)
             return;
 
-        if (student.mark.markType === 0)
-            setBadMarkDisabled(true);
-
-        if (student.mark.markType === 1)
-            setGoodMarkDisabled(true);
+        if (student.mark.markType === BAD_MARK_STUDENT)
+            setBadMarkSet(true);
+        else if (student.mark.markType === MISSING_STUDENT)
+            setMissingMarkSet(true);
+        else if (student.mark.markType === GOOD_MARK_STUDENT)
+            setGoodMarkSet(true);
     }, []);
 
     function ClickMark(markType: number) {
-        if (markType === 0) {
-            setBadMarkDisabled(true);
-            setGoodMarkDisabled(false);
+        if (markType === BAD_MARK_STUDENT) {
+            setMissingMarkSet(false);
+            setBadMarkSet(true);
+            setGoodMarkSet(false);
         }
-        else if (markType === 1) {
-            setBadMarkDisabled(false);
-            setGoodMarkDisabled(true);
+        else if (markType === MISSING_STUDENT) {
+            setMissingMarkSet(true);
+            setBadMarkSet(false);
+            setGoodMarkSet(false);
+        }
+        else if (markType === GOOD_MARK_STUDENT) {
+            setMissingMarkSet(false);
+            setBadMarkSet(false);
+            setGoodMarkSet(true);
         }
 
         HandleMark(student, markType);
@@ -66,19 +79,21 @@ const StudentItemComponent: FC<StudentItemComponentProps> = ({ student, HandleSt
                     </CardContent>
                 </CardActionArea>
 
-                <Stack direction={"row"}
-                    sx={{ width: "90px" }}>
+                <Stack direction={"row"}>
                     <IconButton
-                        disabled={badMarkDisabled}
-                        color="primary"
-                        onClick={() => ClickMark(0)}>
-                        <MacroOff />
+                        onClick={() => ClickMark(MISSING_STUDENT)}
+                        sx={{ backgroundColor: missingMarkSet ? "pink" : "transparent" }}>
+                        <PersonOff htmlColor="red" />
                     </IconButton>
                     <IconButton
-                        disabled={goodMarkDisabled}
-                        color="primary"
-                        onClick={() => ClickMark(1)}>
-                        <ThumbUp />
+                        sx={{ backgroundColor: badMarkSet ? "pink" : "transparent" }}
+                        onClick={() => ClickMark(BAD_MARK_STUDENT)}>
+                        <ThumbDownAlt htmlColor="brown" />
+                    </IconButton>
+                    <IconButton
+                        sx={{ backgroundColor: goodMarkSet ? "lightgreen" : "transparent" }}
+                        onClick={() => ClickMark(GOOD_MARK_STUDENT)}>
+                        <ThumbUp htmlColor="green" />
                     </IconButton>
                 </Stack>
             </Stack>

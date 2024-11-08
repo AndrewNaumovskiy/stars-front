@@ -222,6 +222,9 @@ function StudentInfoPage() {
                         </CardActionArea>
                     </Card>
 
+                    <p>Good: {student.marks.filter(x => x.markType === 2).length}</p>
+                    <p>Bad: {student.marks.filter(x => x.markType === 1).length}</p>
+                    <p>Missing: {student.marks.filter(x => x.markType === 0).length}</p>
                 </Stack>
                 :
                 <h2>Loading...</h2>

@@ -1,10 +1,13 @@
-import { useEffect, useState } from "react";
 import { useSnackbar } from "notistack";
+import { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { api, IError, uuidv4 } from "../../utils";
 
 import ClassGroupComponent from "../../components/ClassGroupComponent";
 
-import { api, IError, uuidv4 } from "../../utils";
-import { ImageList } from "@mui/material";
+import { Fab, ImageList } from "@mui/material";
+
+import EventNoteIcon from '@mui/icons-material/EventNote';
 
 import "./ClassesPage.css";
 
@@ -31,13 +34,23 @@ export interface GroupInDayModel {
 }
 
 function ClassesPage() {
+    const navigate = useNavigate();
     const { enqueueSnackbar } = useSnackbar();
 
     const [groups, setGroups] = useState<GroupModel[]>([]);
 
     useEffect(() => {
+        InitFromLocalStorage();
         GetGroups();
     }, []);
+
+    function InitFromLocalStorage() {
+        if (localStorage.getItem("groups") == null)
+            return;
+
+        const groups: GroupModel[] = JSON.parse(localStorage.getItem("groups") as string);
+        setGroups(groups);
+    }
 
     const GetGroups = async () => {
         try {
@@ -45,6 +58,8 @@ function ClassesPage() {
 
             if (response.error == null) {
                 setGroups(response.data.groups);
+
+                localStorage.setItem("groups", JSON.stringify(response.data.groups));
             }
             else {
                 enqueueSnackbar(response.error.description, { variant: "error" });
@@ -53,6 +68,10 @@ function ClassesPage() {
         catch (error) {
             enqueueSnackbar((error as Error).message, { variant: "error" });
         }
+    }
+
+    function HandleRescheduleClick() {
+        navigate("/schedule");
     }
 
     return (
@@ -71,6 +90,16 @@ function ClassesPage() {
                     </ImageList>
                 </div>
             ))}
+            <Fab
+                onClick={HandleRescheduleClick}
+                sx={
+                    {
+                        position: "fixed",
+                        bottom: "5px",
+                        left: "80%"
+                    }}>
+                <EventNoteIcon />
+            </Fab>
         </>
     )
 }
