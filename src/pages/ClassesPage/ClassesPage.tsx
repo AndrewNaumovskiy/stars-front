@@ -31,6 +31,8 @@ export interface GroupInDayModel {
     status: number;
     startTime: string;
     endTime: string;
+    classes: number;
+    cabinet: string;
 }
 
 function ClassesPage() {

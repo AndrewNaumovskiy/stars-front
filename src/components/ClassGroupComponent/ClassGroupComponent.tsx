@@ -51,9 +51,24 @@ const ClassGroupComponent: FC<ClassGroupComponentProps> = ({ group }) => {
                         {group.status === 2 ? <CheckCircleOutlineIcon htmlColor="green" /> : null}
                     </Stack>
 
-                    <Typography sx={{ color: 'text.secondary' }}>
-                        {group.name} group
-                    </Typography>
+                    <Stack
+                        direction={"row"}
+                        sx={{
+                            justifyContent: "space-around",
+                            alignItems: "center",
+                        }}>
+                        <Typography sx={{ color: 'text.secondary' }}>
+                            {group.name} group
+                        </Typography>
+
+                        <Typography sx={{ color: 'text.secondary' }}>
+                            <b>{group.classes}</b>
+                        </Typography>
+
+                        <Typography sx={{ color: 'text.secondary' }}>
+                            {group.cabinet}
+                        </Typography>
+                    </Stack>
                 </CardContent>
             </CardActionArea>
         </Card>

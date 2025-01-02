@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import dayjs, { Dayjs } from "dayjs";
 import { useSnackbar } from "notistack";
 
-import { Button, Stack, TextField } from "@mui/material";
+import { Button, Slider, Stack } from "@mui/material";
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs'
 import { LocalizationProvider, MobileTimePicker } from "@mui/x-date-pickers";
 
@@ -28,6 +28,62 @@ const defaultSchedule: Dayjs[] = [
     now.set('hour', 14).set('minute', 15)
 ];
 
+const scheduleFor9: Dayjs[] = [
+    now.set('hour', 9).set('minute', 0),
+    now.set('hour', 10).set('minute', 10),
+
+    now.set('hour', 10).set('minute', 20),
+    now.set('hour', 11).set('minute', 30),
+
+    now.set('hour', 11).set('minute', 50),
+    now.set('hour', 13).set('minute', 0),
+
+    now.set('hour', 13).set('minute', 10),
+    now.set('hour', 14).set('minute', 20)
+];
+
+const scheduleFor10: Dayjs[] = [
+    now.set('hour', 10).set('minute', 0),
+    now.set('hour', 11).set('minute', 0),
+
+    now.set('hour', 11).set('minute', 5),
+    now.set('hour', 12).set('minute', 5),
+
+    now.set('hour', 12).set('minute', 25),
+    now.set('hour', 13).set('minute', 25),
+
+    now.set('hour', 13).set('minute', 30),
+    now.set('hour', 14).set('minute', 30)
+];
+
+const scheduleFor11: Dayjs[] = [
+    now.set('hour', 11).set('minute', 0),
+    now.set('hour', 12).set('minute', 0),
+
+    now.set('hour', 12).set('minute', 5),
+    now.set('hour', 13).set('minute', 5),
+
+    now.set('hour', 13).set('minute', 20),
+    now.set('hour', 14).set('minute', 20),
+
+    now.set('hour', 14).set('minute', 25),
+    now.set('hour', 15).set('minute', 25)
+];
+
+const scheduleFor12: Dayjs[] = [
+    now.set('hour', 12).set('minute', 0),
+    now.set('hour', 12).set('minute', 50),
+
+    now.set('hour', 12).set('minute', 55),
+    now.set('hour', 13).set('minute', 45),
+
+    now.set('hour', 14).set('minute', 0),
+    now.set('hour', 14).set('minute', 50),
+
+    now.set('hour', 14).set('minute', 55),
+    now.set('hour', 15).set('minute', 45)
+];
+
 interface ScheduleModel {
     firstStart: Dayjs;
     firstEnd: Dayjs;
@@ -40,8 +96,6 @@ interface ScheduleModel {
 
     fourthStart: Dayjs;
     fourthEnd: Dayjs;
-
-    hourOffset: number;
 }
 
 interface GetScheduleResponseModel {
@@ -50,7 +104,6 @@ interface GetScheduleResponseModel {
 }
 interface GetScheduleDataModel {
     schedule: ScheduleModel;
-    hourOffset: number;
 }
 
 function ReschedulePage() {
@@ -68,7 +121,7 @@ function ReschedulePage() {
     const [fourthStart, setFourthStart] = useState<Dayjs>(defaultSchedule[6]);
     const [fourthEnd, setFourthEnd] = useState<Dayjs>(defaultSchedule[7]);
 
-    const [hourOffset, setHourOffset] = useState<number>(2);
+    const [scheduleType, setScheduleType] = useState<number>(8);
 
     useEffect(() => {
         GetCurrentSchedule();
@@ -92,8 +145,6 @@ function ReschedulePage() {
 
                 setFourthStart(dayjs(schedule.fourthStart));
                 setFourthEnd(dayjs(schedule.fourthEnd));
-
-                setHourOffset(response.data.hourOffset);
             }
             else {
                 enqueueSnackbar(response.error.description, { variant: "error" });
@@ -106,19 +157,17 @@ function ReschedulePage() {
 
     const HandleSaveClick = async () => {
         const schedule: ScheduleModel = {
-            firstStart: firstStart,
-            firstEnd: firstEnd,
+            firstStart: firstStart.add(2, 'hour'),
+            firstEnd: firstEnd.add(2, 'hour'),
 
-            secondStart: secondStart,
-            secondEnd: secondEnd,
+            secondStart: secondStart.add(2, 'hour'),
+            secondEnd: secondEnd.add(2, 'hour'),
 
-            thirdStart: thirdStart,
-            thirdEnd: thirdEnd,
+            thirdStart: thirdStart.add(2, 'hour'),
+            thirdEnd: thirdEnd.add(2, 'hour'),
 
-            fourthStart: fourthStart,
-            fourthEnd: fourthEnd,
-
-            hourOffset: hourOffset
+            fourthStart: fourthStart.add(2, 'hour'),
+            fourthEnd: fourthEnd.add(2, 'hour')
         };
 
         try {
@@ -135,6 +184,42 @@ function ReschedulePage() {
         }
         catch (error) {
             enqueueSnackbar((error as Error).message, { variant: "error" });
+        }
+    }
+
+    function handleScheduleTypeChange(_event: Event, value: number | number[]) {
+        var tempValue : number = value as number;
+        setScheduleType(tempValue);
+
+        var temp = getScheduleType(tempValue);
+        
+        setFirstStart(temp[0]);
+        setFirstEnd(temp[1]);
+
+        setSecondStart(temp[2]);
+        setSecondEnd(temp[3]);
+
+        setThirdStart(temp[4]);
+        setThirdEnd(temp[5]);
+
+        setFourthStart(temp[6]);
+        setFourthEnd(temp[7]);
+    }
+
+    function getScheduleType(value: number): Dayjs[] {
+        switch (value) {
+            case 8:
+                return defaultSchedule;
+            case 9:
+                return scheduleFor9;
+            case 10:
+                return scheduleFor10;
+            case 11:
+                return scheduleFor11;
+            case 12:
+                return scheduleFor12;
+            default:
+                return defaultSchedule;
         }
     }
 
@@ -202,17 +287,17 @@ function ReschedulePage() {
                 </Stack>
             </LocalizationProvider>
 
-            <Stack direction={"row"}
-                sx={{
-                    alignItems: "center",
-                }}>
-                <span style={{ fontWeight: "600", fontSize: "25px" }}>Hour offset</span>
-                <TextField
-                    value={hourOffset}
-                    onChange={(event) => { setHourOffset(parseInt(event.target.value)) }}
-                    size="small"
-                    sx={{ marginLeft: "8px", width: "100px" }} />
-            </Stack>
+            <Slider
+                defaultValue={8}
+                step={1}
+                marks
+                min={8}
+                max={12}
+                valueLabelDisplay="auto"
+                value={scheduleType}
+                onChange={handleScheduleTypeChange}
+                sx={{width: window.innerWidth - 100, marginLeft: "20px"}}
+            />
 
             <Button
                 variant="outlined"
