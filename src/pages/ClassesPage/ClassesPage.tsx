@@ -5,7 +5,7 @@ import { api, IError, uuidv4 } from "../../utils";
 
 import ClassGroupComponent from "../../components/ClassGroupComponent";
 
-import { Fab, ImageList } from "@mui/material";
+import { Fab, ImageList, Stack } from "@mui/material";
 
 import EventNoteIcon from '@mui/icons-material/EventNote';
 
@@ -20,7 +20,10 @@ interface GetGroupsResponseData {
 }
 
 interface GroupModel {
-    day: string;
+    dayOfWeek: string;
+    date: string;
+    dateReschedule: string;
+    isToday: boolean;
     groups: GroupInDayModel[];
 }
 
@@ -80,10 +83,24 @@ function ClassesPage() {
         <>
             {groups.map((group: GroupModel) => (
                 <div key={uuidv4()}>
-                    <h2 className="meow">{group.day}</h2>
+                    <h2 className="meow">{group.dayOfWeek}</h2>
+                    {group.isToday ? <h2 className="meow">(Today)</h2> : null}
+
+                    <Stack
+                        direction={"row"}
+                        sx={{
+                            justifyContent: "space-between",
+                            alignItems: "center",
+                        }}>
+                        <span>Date: <b>{group.date}</b></span>
+                        <span>Rescheduled to: <b>{group.dateReschedule}</b></span>
+
+                    </Stack>
+
                     <ImageList
                         cols={2}
-                        gap={4}>
+                        gap={4}
+                        sx={{ overflowY: "unset", marginTop: "0px" }}>
                         {group.groups.map((groupInDay: GroupInDayModel) =>
                             <ClassGroupComponent
                                 key={uuidv4()}

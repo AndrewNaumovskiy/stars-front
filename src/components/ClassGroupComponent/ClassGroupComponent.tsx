@@ -54,7 +54,7 @@ const ClassGroupComponent: FC<ClassGroupComponentProps> = ({ group }) => {
                     <Stack
                         direction={"row"}
                         sx={{
-                            justifyContent: "space-around",
+                            justifyContent: "space-between",
                             alignItems: "center",
                         }}>
                         <Typography sx={{ color: 'text.secondary' }}>
