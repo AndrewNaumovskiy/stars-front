@@ -26,7 +26,7 @@ export interface StudentModel {
     middleName: string;
     groupFk: number;
 
-    isFavorite: boolean;
+    studentType: number;
     impression: string;
 
     mark: MarkDbModel | null;

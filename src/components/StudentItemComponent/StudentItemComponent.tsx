@@ -2,7 +2,7 @@ import { FC, useEffect, useState } from "react";
 
 import { Card, CardActionArea, CardContent, CardHeader, IconButton, Stack } from "@mui/material";
 
-import { ThumbUp, ThumbDownAlt, StarBorder, PersonOff } from "@mui/icons-material";
+import { ThumbUp, ThumbDownAlt, StarBorder, HomeWork, DirectionsRun, PersonOff } from "@mui/icons-material";
 
 import { StudentModel } from "../../pages/StudentsPage/StudentsPage";
 
@@ -54,6 +54,19 @@ const StudentItemComponent: FC<StudentItemComponentProps> = ({ student, HandleSt
         HandleMark(student, markType);
     }
 
+    function handleStudentTypeSymbol(student: StudentModel): any {
+        switch (student.studentType) {
+            case 1:
+                return <StarBorder htmlColor="orange" />
+            case 0:
+                return null;
+            case -1:
+                return <HomeWork htmlColor="gray" />
+            case -2:
+                return <DirectionsRun htmlColor="black" />
+        }
+    }
+
     return (
         <Card sx={{ marginTop: "1px" }}>
             <Stack
@@ -70,7 +83,7 @@ const StudentItemComponent: FC<StudentItemComponentProps> = ({ student, HandleSt
                             alignItems: "center",
                             padding: "7px"
                         }}>
-                        {student.isFavorite ? <StarBorder htmlColor="orange" /> : null}
+                        {handleStudentTypeSymbol(student)}
                         <CardHeader title={`${student.lastName} ${student.firstName}`} sx={{ padding: "0px", marginLeft: "7px" }} />
                     </Stack>
 
