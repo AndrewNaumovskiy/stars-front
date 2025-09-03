@@ -156,18 +156,20 @@ function ReschedulePage() {
     }
 
     const HandleSaveClick = async () => {
+        var utcOffset = dayjs().utcOffset();
+
         const schedule: ScheduleModel = {
-            firstStart: firstStart.add(2, 'hour'),
-            firstEnd: firstEnd.add(2, 'hour'),
+            firstStart: firstStart.add(utcOffset, 'minute'),
+            firstEnd: firstEnd.add(utcOffset, 'minute'),
 
-            secondStart: secondStart.add(2, 'hour'),
-            secondEnd: secondEnd.add(2, 'hour'),
+            secondStart: secondStart.add(utcOffset, 'minute'),
+            secondEnd: secondEnd.add(utcOffset, 'minute'),
 
-            thirdStart: thirdStart.add(2, 'hour'),
-            thirdEnd: thirdEnd.add(2, 'hour'),
+            thirdStart: thirdStart.add(utcOffset, 'minute'),
+            thirdEnd: thirdEnd.add(utcOffset, 'minute'),
 
-            fourthStart: fourthStart.add(2, 'hour'),
-            fourthEnd: fourthEnd.add(2, 'hour')
+            fourthStart: fourthStart.add(utcOffset, 'minute'),
+            fourthEnd: fourthEnd.add(utcOffset, 'minute')
         };
 
         try {
@@ -188,11 +190,11 @@ function ReschedulePage() {
     }
 
     function handleScheduleTypeChange(_event: Event, value: number | number[]) {
-        var tempValue : number = value as number;
+        var tempValue: number = value as number;
         setScheduleType(tempValue);
 
         var temp = getScheduleType(tempValue);
-        
+
         setFirstStart(temp[0]);
         setFirstEnd(temp[1]);
 
@@ -296,7 +298,7 @@ function ReschedulePage() {
                 valueLabelDisplay="auto"
                 value={scheduleType}
                 onChange={handleScheduleTypeChange}
-                sx={{width: window.innerWidth - 100, marginLeft: "20px"}}
+                sx={{ width: window.innerWidth - 100, marginLeft: "20px" }}
             />
 
             <Button

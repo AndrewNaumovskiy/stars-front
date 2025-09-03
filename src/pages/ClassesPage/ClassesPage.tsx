@@ -5,7 +5,7 @@ import { api, IError, uuidv4 } from "../../utils";
 
 import ClassGroupComponent from "../../components/ClassGroupComponent";
 
-import { Fab, ImageList, Stack } from "@mui/material";
+import { Fab, ImageList } from "@mui/material";
 
 import EventNoteIcon from '@mui/icons-material/EventNote';
 
@@ -85,17 +85,6 @@ function ClassesPage() {
                 <div key={uuidv4()}>
                     <h2 className="meow">{group.dayOfWeek}</h2>
                     {group.isToday ? <h2 className="meow">(Today)</h2> : null}
-
-                    <Stack
-                        direction={"row"}
-                        sx={{
-                            justifyContent: "space-between",
-                            alignItems: "center",
-                        }}>
-                        <span>Date: <b>{group.date}</b></span>
-                        <span>Rescheduled to: <b>{group.dateReschedule}</b></span>
-
-                    </Stack>
 
                     <ImageList
                         cols={2}
