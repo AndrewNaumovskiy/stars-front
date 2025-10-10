@@ -1,3 +1,4 @@
+import dayjs from "dayjs";
 import { FC } from "react";
 import { useNavigate } from "react-router-dom";
 
@@ -10,6 +11,7 @@ import { GroupInDayModel } from "../../pages/ClassesPage/ClassesPage";
 
 interface ClassGroupComponentProps {
     group: GroupInDayModel;
+    isToday: boolean;
 }
 
 const roman: { [key: number]: string } = {
@@ -23,11 +25,37 @@ const ToRoman = (num: number): string => {
     return roman[num];
 }
 
-const ClassGroupComponent: FC<ClassGroupComponentProps> = ({ group }) => {
+const ClassGroupComponent: FC<ClassGroupComponentProps> = ({ group, isToday }) => {
     const navigate = useNavigate();
 
     function HandleClick() {
         navigate("/group/" + group.id);
+    }
+
+    function GetLessonStatus(): any {
+        if (!isToday)
+            return null;
+
+        var currDateHour = dayjs().hour();
+        var currDateMinute = dayjs().minute();
+
+        var array = group.startTime.split(":");
+        var groupStartHour = parseInt(array[0]);
+        var groupStartMinute = parseInt(array[1]);
+
+        array = group.endTime.split(":");
+        var groupEndHour = parseInt(array[0]);
+        var groupEndMinute = parseInt(array[1]);
+
+        if (currDateHour > groupEndHour || (currDateHour === groupEndHour && currDateMinute > groupEndMinute)) {
+            return <CheckCircleOutlineIcon htmlColor="green" />;
+        }
+
+        if (currDateHour < groupStartHour || (currDateHour === groupStartHour && currDateMinute < groupStartMinute)) {
+            return null;
+        }
+
+        return <AccessTimeIcon htmlColor="blue" />;
     }
 
     return (
@@ -47,8 +75,7 @@ const ClassGroupComponent: FC<ClassGroupComponentProps> = ({ group }) => {
                             <p style={{ margin: "0px", fontSize: "16px" }}>{group.endTime}</p>
                         </Stack>
 
-                        {group.status === 1 ? <AccessTimeIcon htmlColor="blue" /> : null}
-                        {group.status === 2 ? <CheckCircleOutlineIcon htmlColor="green" /> : null}
+                        {GetLessonStatus()}
                     </Stack>
 
                     <Stack

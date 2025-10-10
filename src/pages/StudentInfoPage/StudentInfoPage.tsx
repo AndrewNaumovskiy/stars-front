@@ -26,7 +26,7 @@ interface StudentDbModel {
     middleName: string;
 
     groupFk: number;
-    isFavorite: number;
+    studentType: number; // 1 - star, 0 - usual, -1 - remote, -2 - expelled
 
     impression: string;
     telegram: string;
@@ -78,7 +78,7 @@ function StudentInfoPage() {
             const response: GetStudentResponseModel = await api.get(`api/students/${id}`).json();
             if (response.error == null) {
                 setStudent(response.data.student);
-                setIsFavorite(response.data.student.isFavorite === 1);
+                setIsFavorite(response.data.student.studentType === 1);
             }
             else {
                 enqueueSnackbar(response.error.description, { variant: "error" });

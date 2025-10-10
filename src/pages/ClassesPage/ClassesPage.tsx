@@ -93,7 +93,8 @@ function ClassesPage() {
                         {group.groups.map((groupInDay: GroupInDayModel) =>
                             <ClassGroupComponent
                                 key={uuidv4()}
-                                group={groupInDay} />
+                                group={groupInDay}
+                                isToday={group.isToday} />
                         )}
                     </ImageList>
                 </div>
